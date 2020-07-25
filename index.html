@@ -1,7 +1,5 @@
 <!DOCTYPE HTML>
-<!--
-	Joe Brucker
--->
+<!--Joe Brucker-->
 <html>
 
 <head>
@@ -17,63 +15,190 @@
 
     gtag('config', 'UA-173544897-1');
   </script>
-
   <title>Joe Brucker</title>
   <meta name="keywords" content="data scientist, Joe Brucker">
   <meta name="author" content="Joe Brucker">
-
+  <script src="fdj.js"></script>
   <!-- CSS -->
   <link rel="stylesheet" href="https://use.typekit.net/ctq7vtg.css">
+  <style>
+    body {
+      display: block;
+    }
+    a {
+      color: inherit;
+    }
 
+    .schoolS, .workS {
+      display: none;
+    }
+    .school:focus~.schoolS {
+      display: block;
+    }
+    .work:focus~.workS {
+      display: block;
+    }
 
-
-
+    #container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    #navi {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 20;
+      left: 0;
+      z-index: 10;
+    }
+    #infoi {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 20;
+      left: 0;
+      margin: 0 auto;
+      padding: 0;
+    }
+  </style>
 </head>
 
 <body style="background-color:#fceed1; font-family: orpheuspro, serif;font-weight: 400; font-style: normal;">
+  <div id="container">
+    <!-- Header -->
+    <header style="border-bottom: 1px solid #c89666;padding-top: 5px;padding-bottom: 40px;">
 
-  <!-- Header -->
-  <header style="border-bottom: 1px solid #c89666;
-                        padding-top: 5px;
-                        padding-bottom: 40px;">
-    <h2 style="float: left; display: inline-block; margin: 0 0 0 auto;">Joe Brucker</h2>
-    <span style="float: right; display: inline-block; margin: 0 0 0 auto;">
-      <a href="https://twitter.com/bruckerjoe" target="_blank"><span><img src="https://cdn3.iconfinder.com/data/icons/social-icons-24/24/Twitter-1-512.png" alt="Twitter" width="30"></span></a>
-      <a href="https://www.linkedin.com/in/joebrucker" target="_blank"><span><img src="https://img.icons8.com/all/500/linkedin.png" alt="LinkedIn" width="30"></span></a>
-      <a href="https://github.com/jbrkr" target="_blank"><span><img src="https://cdn4.iconfinder.com/data/icons/43-social-media-line-icons/24/github-512.png" alt="GitHub" width="30"></span></a>
-      <a href="mailto:joe.r.brucker@gmail.com" target="_blank"><span><img src="https://cdn3.iconfinder.com/data/icons/lexter-flat-outline-apps/45/envelope_outline-512.png" alt="Email" width="28"></span></a>
-    </span>
-  </header>
-  <section style="content: ;display: table;">
-    <aside style="float: left; padding: 20px">
+      <h2 style="float: left; display: inline-block; margin: 0 0 0 auto;">Joe Brucker</h2>
 
+      <span style="float: right; display: inline-block; margin: 0 0 0 auto;">
+        <a href="https://twitter.com/bruckerjoe" target="_blank"><span><img src="https://cdn3.iconfinder.com/data/icons/social-icons-24/24/Twitter-1-512.png" alt="Twitter" width="30"></span></a>
+        <a href="https://www.linkedin.com/in/joebrucker" target="_blank"><span><img src="https://img.icons8.com/all/500/linkedin.png" alt="LinkedIn" width="30"></span></a>
+        <a href="https://github.com/jbrkr" target="_blank"><span><img src="https://cdn4.iconfinder.com/data/icons/43-social-media-line-icons/24/github-512.png" alt="GitHub" width="30"></span></a>
+        <a href="mailto:joe.r.brucker@gmail.com" target="_blank"><span><img src="https://cdn3.iconfinder.com/data/icons/lexter-flat-outline-apps/45/envelope_outline-512.png" alt="Email" width="28"></span></a>
+      </span>
 
-      <img src="https://pbs.twimg.com/profile_images/1285393425051918338/hnutxsU3_400x400.jpg" style="border-radius:50%; width: 200px; mix-blend-mode: multiply;" alt="me">
-      <p style="text-align: center">data science &nbsp;&bull;&nbsp; other things </p>
-      <p>/current work : <a href = "https://www.policelab.org/" target="_blank">police lab</a></p>
-      <p>/current book : <a href = "https://www.publicaffairsbooks.com/titles/stephanie-kelton/the-deficit-myth/9781541736184/" target="_blank">the deficit myth</a></p>
-    </aside>
+    </header>
+    <div id="infoi">
+      <canvas width="1040" height="900"></canvas>
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script>
+        var canvas = document.querySelector("canvas"),
+          context = canvas.getContext("2d"),
+          width = canvas.width,
+          height = canvas.height;
 
+        var simulation = d3.forceSimulation()
+          .force("link", d3.forceLink().id(function(d) {
+            return d.id;
+          }))
+          .force("charge", d3.forceManyBody())
+          .force("center", d3.forceCenter().x(width/1.5).y(height/1.5));
 
-    <article style="padding: 20px">
-      <p>
-        hi! my name is joe brucker, and i'm a student in mit's
-        data, economics, and policy program. <br /><br />
-        welcome to my personal site. <br /><br />
-      </p>
-    </article>
-  </section>
-  <!-- Footer -->
-  <footer style="position: fixed;
-                          height: 40px;
-                          bottom: 0px;
-                          left: 10px;
-                          right: 0px;
-                          margin-bottom: 0px;">
-    <span>&copy; Joe Brucker 2020.</span>
-  </footer>
+        d3.json("./miserables.json", function(error, graph) {
+          if (error) throw error;
 
+          simulation
+            .nodes(graph.nodes)
+            .on("tick", ticked);
 
+          simulation.force("link")
+            .links(graph.links);
+
+          d3.select(canvas)
+            .call(d3.drag()
+              .container(canvas)
+              .subject(dragsubject)
+              .on("start", dragstarted)
+              .on("drag", dragged)
+              .on("end", dragended));
+
+          function ticked() {
+            context.clearRect(0, 0, width, height);
+            context.beginPath();
+            graph.links.forEach(drawLink);
+            context.strokeStyle = "#aaa";
+            context.stroke();
+            context.beginPath();
+            graph.nodes.forEach(drawNode);
+            context.fill();
+            context.strokeStyle = "#575D64";
+            context.stroke();
+          }
+
+          function dragsubject() {
+            return simulation.find(d3.event.x, d3.event.y);
+          }
+        });
+
+        function dragstarted() {
+          if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+          d3.event.subject.fx = d3.event.subject.x;
+          d3.event.subject.fy = d3.event.subject.y;
+        }
+
+        function dragged() {
+          d3.event.subject.fx = d3.event.x;
+          d3.event.subject.fy = d3.event.y;
+        }
+
+        function dragended() {
+          if (!d3.event.active) simulation.alphaTarget(0);
+          d3.event.subject.fx = null;
+          d3.event.subject.fy = null;
+        }
+
+        function drawLink(d) {
+          context.moveTo(d.source.x, d.source.y);
+          context.lineTo(d.target.x, d.target.y);
+        }
+
+        function drawNode(d) {
+          context.moveTo(d.x + 1, d.y);
+          context.arc(d.x, d.y, 1, .5, 2 * Math.PI);
+        }
+      </script>
+    </div>
+
+    <div id="navi">
+      <section style="content: ;display: table;padding: 20px; padding-top: 20px;">
+
+        <aside style="float: left;padding: 20px; ">
+          <div style="background-color:#fceed1; border-radius:50%;">
+            <img src="https://pbs.twimg.com/profile_images/1285393425051918338/hnutxsU3_400x400.jpg" style="border-radius:50%; width: 200px; mix-blend-mode: multiply;" alt="me" />
+          </div>
+          <p style="text-align: center">data &nbsp;&bull;&nbsp; other things </p>
+
+          <p>/current work : <a href="https://www.policelab.org/" target="_blank">police lab</a></p>
+          <p>/current book : <a href="https://www.publicaffairsbooks.com/titles/stephanie-kelton/the-deficit-myth/9781541736184/" target="_blank">the deficit myth</a></p>
+
+          <span class="school" tabindex="0">/school</span> _
+          <span class="work" tabindex="0">work</span>
+          <p class="workS">Oracle, Western Union, HP</p>
+          <p class="schoolS">MIT, GTech, CSU</p>
+        </aside>
+
+        <article style="padding: 20px;">
+          <p>
+            hi! my name is joe brucker, and i'm a student in mit's
+            data, economics, and policy program. <br /><br />
+            welcome to my personal site. <br /><br />
+          </p>
+        </article>
+
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer style="position: fixed;
+                  height: 40px;
+                  bottom: 0px;
+                  left: 10px;
+                  right: 0px;
+                  margin-bottom: 0px;">
+      <span>&copy; Joe Brucker 2020.</span>
+    </footer>
+
+  </div>
 </body>
-
 </html>
